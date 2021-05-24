@@ -1,0 +1,32 @@
+# run with `docker-compose up -d`
+# to unmount volume and reinitialize schema/data, run with `docker-compose down -v`
+version: '3.5'
+services:
+  {{ app_name }}:
+    build: 
+      context: .
+      dockerfile: local.Dockerfile
+    restart: always
+    env_file: 
+      - local-properties.env
+    ports:
+      - 3000:3000
+    command: ./scripts/build-local "{{ app_name }}"
+    healthcheck:
+      test: ["CMD", "curl", "--silent", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/usr/local/go/src/{{ module }}
+      # Mount gCloud configuration
+      - ~/.config/gcloud/:/root/.config/gcloud/
+      # Mount dependencies
+      - ~/go/src/github.com:/go/src/github.com
+    networks:
+      - {{ namespace }}
+networks:
+  {{ namespace }}:
+    name: {{ namespace }}
+volumes:
+  db_data:

@@ -1,0 +1,6 @@
+{
+    "module": "example-module",
+    "repo_url": "github.com/Daniel-Carroll/example-repo",
+    "app_name": "example-app",
+    "namespace": "example"
+}
